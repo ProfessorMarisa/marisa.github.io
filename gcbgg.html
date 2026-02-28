@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCB.gg</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+:root{
+  --bg:#04060f;--bg2:#080c1a;--panel:#0c1120;
+  --border:#1a2040;--border2:#2a3a6a;
+  --pk:#00e5ff;--pu:#7b8fff;--ye:#4fc3f7;--cy:#00e5ff;
+  --text:#cdd6f4;--muted:#45475a;
+  --card-h:200px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* 배경 - 격자 + 그라디언트 */
+body::before{content:'';position:fixed;inset:0;
+  background:
+    linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px),
+    radial-gradient(ellipse 80% 60% at 0% 0%,rgba(0,229,255,.07),transparent 50%),
+    radial-gradient(ellipse 70% 60% at 100% 100%,rgba(123,143,255,.07),transparent 50%);
+  background-size:60px 60px,60px 60px,100% 100%,100% 100%;
+  pointer-events:none;z-index:0}
+
+/* NAV - 두꺼운 왼쪽 테두리 스타일 */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:2px;padding:0 32px;height:64px;
+  background:rgba(3,0,8,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border2);overflow-x:auto;
+  box-shadow:0 0 40px rgba(0,229,255,.1),inset 0 -1px 0 rgba(0,229,255,.2)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:900;color:transparent;
+  background:linear-gradient(90deg,#00e5ff,#7b8fff,#4fc3f7);-webkit-background-clip:text;background-clip:text;
+  text-decoration:none;letter-spacing:4px;margin-right:24px;white-space:nowrap;cursor:pointer;
+  filter:drop-shadow(0 0 12px rgba(0,229,255,.5))}
+.nav-link{color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:700;
+  padding:8px 14px;border-radius:0;transition:all .2s;white-space:nowrap;cursor:pointer;
+  background:none;border:none;font-family:'Noto Sans KR',sans-serif;
+  position:relative;letter-spacing:.5px}
+.nav-link::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2px;
+  background:var(--pk);transition:left .2s,right .2s;box-shadow:0 0 8px rgba(0,229,255,.6)}
+.nav-link:hover{color:var(--text)}
+.nav-link:hover::after{left:10%;right:10%}
+.nav-link.active{color:#fff}
+.nav-link.active::after{left:0;right:0}
+.nav-link.red{color:#ff4e00}
+
+/* LAYOUT */
+.container{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:48px 32px 80px}
+.page{display:none}.page.active{display:block}
+
+/* 페이지 헤더 - 왼쪽 정렬 + 굵은 라인 */
+.page-header{margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.page-header h1{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:900;
+  letter-spacing:6px;color:transparent;
+  background:linear-gradient(90deg,#fff 40%,rgba(0,229,255,.9));
+  -webkit-background-clip:text;background-clip:text;
+  text-align:left;animation:flicker 8s infinite;display:inline-block;
+  filter:drop-shadow(0 0 20px rgba(0,229,255,.5)) drop-shadow(0 0 40px rgba(0,229,255,.2))}
+.page-header .underline{display:none}
+
+@keyframes flicker{0%,94%,100%{opacity:1}95%{opacity:.85}97%{opacity:.95}}
+@keyframes cardIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.7;box-shadow:0 0 16px rgba(0,229,255,.7)}}
+@keyframes shimmer{0%{left:-100%}100%{left:200%}}
+
+/* 검색 - 사이버펑크 스타일 */
+.search-bar{display:flex;justify-content:flex-start;margin-bottom:20px}
+.search-inner{position:relative;width:100%;max-width:440px}
+.search-inner svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--cy);pointer-events:none}
+.search-input{width:100%;background:transparent;
+  border:none;border-bottom:2px solid var(--border2);
+  border-radius:0;color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  font-size:.95rem;padding:12px 16px 12px 48px;outline:none;transition:border-color .2s,box-shadow .2s;
+  letter-spacing:.5px}
+.search-input:focus{border-color:var(--pk);box-shadow:0 4px 20px rgba(0,229,255,.15)}
+.search-input::placeholder{color:var(--muted)}
+.count-badge{text-align:left;color:var(--muted);font-size:.72rem;margin-bottom:28px;letter-spacing:2px;font-family:'Orbitron',sans-serif}
+.count-badge span{color:var(--pk);font-weight:900}
+.no-results{display:none;text-align:center;padding:60px;color:var(--muted);font-size:.9rem}
+.no-results.show{display:block}
+.loading-msg{text-align:center;padding:60px;color:var(--muted);font-size:.85rem;letter-spacing:3px;font-family:'Orbitron',sans-serif}
+
+/* 캐릭터 그리드 - 더 크게 */
+.character-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+
+/* 캐릭터 카드 - 클립패스 사용한 사이버 스타일 */
+.char-card{
+  position:relative;background:var(--panel);
+  border:1px solid var(--border2);
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  overflow:hidden;cursor:pointer;
+  transition:transform .25s cubic-bezier(.34,1.4,.64,1),box-shadow .3s,border-color .2s;
+  aspect-ratio:3/4;animation:cardIn .4s ease both}
+.char-card.hidden{display:none}
+.char-card:hover{
+  transform:translateY(-10px) scale(1.04);
+  border-color:var(--pk);
+  box-shadow:0 20px 50px rgba(0,229,255,.2),0 0 0 1px rgba(0,229,255,.2),inset 0 0 30px rgba(0,229,255,.04)}
+.char-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.char-card:hover img{transform:scale(1.1)}
+
+/* shimmer */
+.char-card::before{content:'';position:absolute;top:0;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  left:-100%;animation:none;z-index:3;pointer-events:none}
+.char-card:hover::before{animation:shimmer .6s ease forwards}
+
+/* 코너 장식 */
+.char-card::after{content:'';position:absolute;top:0;right:0;width:16px;height:16px;
+  background:var(--cy);clip-path:polygon(100% 0,100% 100%,0 0);
+  opacity:.7;z-index:4;transition:opacity .2s}
+.char-card:hover::after{opacity:1}
+
+.char-overlay{position:absolute;bottom:0;left:0;right:0;padding:40px 10px 10px;
+  background:linear-gradient(transparent,rgba(3,0,8,.7) 40%,rgba(3,0,8,.97));z-index:2;text-align:left;padding-left:12px}
+.char-name{font-size:.8rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.5px}
+.char-num{font-size:.55rem;color:var(--pk);font-family:'Orbitron',sans-serif;letter-spacing:2px;margin-top:2px;opacity:.8}
+
+/* 모달 배경 */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(3,0,8,.88);backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-bg.open{opacity:1;pointer-events:all}
+
+/* 모달 - 클립패스 + 사이버 코너 */
+.modal{
+  background:linear-gradient(135deg,#080c1a 0%,#04060f 50%,#080c1a 100%);
+  border:1px solid rgba(0,229,255,.2);
+  clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px));
+  width:100%;max-width:720px;max-height:90vh;overflow-y:auto;position:relative;
+  transform:translateY(24px) scale(.97);
+  transition:transform .35s cubic-bezier(.34,1.2,.64,1),opacity .25s;
+  box-shadow:0 0 100px rgba(0,229,255,.12),0 0 50px rgba(123,143,255,.08),0 50px 100px rgba(0,0,0,.8)}
+.modal-bg.open .modal{transform:translateY(0) scale(1)}
+
+/* 모달 코너 장식 */
+.modal::before{content:'';position:absolute;top:0;right:0;width:24px;height:24px;
+  background:var(--cy);clip-path:polygon(100% 0,100% 100%,0 0);z-index:5;pointer-events:none}
+.modal::after{content:'';position:absolute;bottom:0;left:0;width:24px;height:24px;
+  background:var(--pu);clip-path:polygon(0 0,0 100%,100% 100%);z-index:5;pointer-events:none}
+
+.modal-close{position:absolute;top:12px;right:36px;background:transparent;
+  border:none;color:var(--muted);width:32px;height:32px;
+  border-radius:0;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;
+  transition:color .2s,text-shadow .2s;z-index:10;font-family:monospace}
+.modal-close:hover{color:var(--cy);text-shadow:0 0 12px rgba(0,229,255,.7)}
+
+/* 모달 헤더 */
+.modal-header{display:flex;gap:24px;padding:28px;
+  border-bottom:1px solid rgba(0,229,255,.12);
+  position:sticky;top:0;
+  background:linear-gradient(135deg,rgba(8,12,26,.98),rgba(4,6,15,.98));
+  backdrop-filter:blur(16px);z-index:1}
+.modal-portrait{width:100px;height:133px;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  object-fit:cover;flex-shrink:0;
+  border:1px solid rgba(0,229,255,.35);
+  box-shadow:0 0 30px rgba(0,229,255,.2),0 0 60px rgba(123,143,255,.15)}
+.modal-info{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.modal-name{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:900;
+  color:transparent;background:linear-gradient(90deg,#fff,rgba(0,229,255,.8));
+  -webkit-background-clip:text;background-clip:text;letter-spacing:3px}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:2px}
+
+/* 스탯 칩 - 태그 스타일 */
+.stat-chip{background:transparent;border:none;border-left:2px solid var(--cy);
+  border-radius:0;padding:4px 10px;font-size:.78rem;color:#cdd6f4;
+  display:flex;align-items:center;gap:6px;transition:border-color .2s}
+.stat-chip span{color:var(--cy);font-weight:900;font-size:.9rem}
+
+.modal-body{padding:24px 28px;display:flex;flex-direction:column;gap:10px}
+
+/* 스킬 카드 - 왼쪽 컬러 바 + 번호 */
+.skill-list{display:flex;flex-direction:column;gap:8px}
+.skill-item{background:rgba(8,12,26,.6);
+  border:1px solid var(--border);border-left:3px solid var(--border2);
+  border-radius:0 8px 8px 0;padding:14px 16px;
+  transition:border-left-color .2s,background .2s,transform .2s,box-shadow .2s}
+.skill-item:hover{border-left-color:var(--cy);background:rgba(0,229,255,.04);
+  transform:translateX(6px);box-shadow:0 4px 20px rgba(0,229,255,.08),inset 0 0 20px rgba(0,229,255,.03)}
+.skill-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+
+/* 뱃지 - 사각형 태그 스타일 */
+.skill-badge{font-family:'Orbitron',sans-serif;font-size:.58rem;font-weight:900;
+  padding:3px 10px;border-radius:2px;flex-shrink:0;letter-spacing:1.5px;white-space:nowrap;
+  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.badge-passive{background:rgba(191,0,255,.25);color:#df80ff;box-shadow:0 0 10px rgba(191,0,255,.3)}
+.badge-1{background:rgba(0,229,255,.15);color:#00e5ff;box-shadow:0 0 10px rgba(0,229,255,.3)}
+.badge-2{background:rgba(255,230,0,.2);color:#ffe600;box-shadow:0 0 10px rgba(255,230,0,.3)}
+.badge-3{background:rgba(0,255,180,.15);color:#00ffb3;box-shadow:0 0 10px rgba(0,255,180,.25)}
+.badge-ult{background:linear-gradient(90deg,rgba(0,229,255,.2),rgba(123,143,255,.25));
+  color:#fff;box-shadow:0 0 14px rgba(0,229,255,.35);animation:pulse-badge 2s infinite}
+.badge-basic{background:rgba(120,120,120,.2);color:#aaa}
+.badge-weapon{background:rgba(255,200,0,.2);color:#ffd700;box-shadow:0 0 8px rgba(255,200,0,.3)}
+
+.skill-name{font-weight:800;font-size:.92rem;color:#fff;letter-spacing:.3px}
+.skill-desc{font-size:.79rem;line-height:1.75;color:#8a7aaa}
+
+.skill-item.clickable{cursor:pointer}
+.skill-item.clickable{border-left-color:rgba(255,200,0,.4)}
+.skill-item.clickable:hover{border-left-color:#ffd700;background:rgba(255,200,0,.05);box-shadow:0 4px 20px rgba(255,200,0,.1)}
+.skill-item.clickable .skill-header::after{content:'▶';margin-left:auto;font-size:.6rem;color:var(--muted);transition:color .2s,transform .2s}
+.skill-item.clickable:hover .skill-header::after{color:#ffd700;transform:translateX(4px)}
+.skill-item.titan-clickable{cursor:pointer;border-left-color:rgba(255,107,53,.4)}
+.skill-item.titan-clickable:hover{border-left-color:#ff6b35;background:rgba(255,107,53,.05);box-shadow:0 4px 20px rgba(255,107,53,.1)}
+.skill-item.titan-clickable .skill-header::after{content:'▶';margin-left:auto;font-size:.6rem;color:var(--muted);transition:color .2s,transform .2s}
+.skill-item.titan-clickable:hover .skill-header::after{color:#ff6b35;transform:translateX(4px)}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;background:transparent;
+  border:1px solid var(--border2);border-radius:2px;
+  color:var(--muted);font-size:.78rem;font-weight:700;padding:8px 16px;
+  cursor:pointer;transition:all .2s;font-family:'Noto Sans KR',sans-serif;margin-bottom:14px;
+  clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.back-btn:hover{border-color:var(--pk);color:var(--pk);box-shadow:0 0 16px rgba(255,45,120,.2)}
+
+/* 무기 모달 */
+.weapon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.weapon-item{background:rgba(8,12,26,.6);border:1px solid var(--border);
+  border-top:2px solid rgba(255,200,0,.4);border-radius:0 0 8px 8px;
+  padding:16px;display:flex;flex-direction:column;
+  transition:border-top-color .2s,box-shadow .2s,background .2s}
+.weapon-item:hover{border-top-color:#ffd700;box-shadow:0 0 20px rgba(255,200,0,.15);background:rgba(255,200,0,.03)}
+.weapon-img{width:100%;height:80px;object-fit:contain;margin-bottom:12px;filter:drop-shadow(0 0 10px rgba(255,200,0,.3))}
+.weapon-name{font-weight:900;font-size:.95rem;color:#ffd700;margin-bottom:8px;letter-spacing:.5px}
+.weapon-desc{font-size:.75rem;line-height:1.6;color:#8a7aaa}
+
+/* 타이탄 모달 */
+.titan-grid{display:flex;flex-direction:column;gap:8px}
+.titan-item{display:flex;align-items:center;gap:16px;
+  background:rgba(8,12,26,.6);border:1px solid var(--border);
+  border-left:3px solid rgba(255,107,53,.3);
+  border-radius:0 8px 8px 0;padding:14px;cursor:pointer;
+  transition:border-left-color .2s,background .2s,transform .2s,box-shadow .2s}
+.titan-item:hover{border-left-color:#ff6b35;background:rgba(255,107,53,.06);
+  transform:translateX(6px);box-shadow:0 4px 20px rgba(255,107,53,.12)}
+.titan-img{width:50px;height:50px;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+  object-fit:cover;flex-shrink:0;border:1px solid rgba(255,107,53,.3)}
+.titan-info{flex:1}
+.titan-item-name{font-weight:900;font-size:.88rem;color:#ff6b35;margin-bottom:4px;letter-spacing:.5px}
+.titan-item-desc{font-size:.74rem;line-height:1.5;color:#8a7aaa}
+.titan-item-arrow{color:var(--muted);font-size:.8rem;flex-shrink:0;transition:transform .2s,color .2s}
+.titan-item:hover .titan-item-arrow{color:#ff6b35;transform:translateX(4px)}
+.smart-pistol-divider{margin-top:12px;padding-top:16px;border-top:1px solid var(--border)}
+.smart-pistol-label{font-size:.65rem;color:var(--muted);letter-spacing:2px;margin-bottom:10px;font-family:'Orbitron',sans-serif}
+.titan-modal-header{padding:20px 28px 16px;border-bottom:1px solid rgba(255,107,53,.2);position:sticky;top:0;background:rgba(8,12,26,.98);z-index:1}
+.titan-modal-hero{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:16px}
+.titan-modal-img{width:90px;height:90px;object-fit:contain;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  border:1px solid rgba(255,107,53,.4);background:rgba(0,0,0,.3);padding:6px;
+  filter:drop-shadow(0 0 16px rgba(255,107,53,.4))}
+.titan-modal-title{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;color:#ff6b35;letter-spacing:2px;text-shadow:0 0 12px rgba(255,107,53,.5);text-align:center}
+.titan-modal-desc{font-size:.78rem;color:#8a7aaa;line-height:1.6;text-align:center}
+
+/* 랭킹 */
+.ranking-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.ranking-table th{background:rgba(8,12,26,.8);border-bottom:2px solid var(--border2);
+  padding:12px 14px;color:var(--muted);font-weight:900;font-family:'Orbitron',sans-serif;
+  font-size:.6rem;letter-spacing:1.5px;text-align:left;white-space:nowrap}
+.ranking-table td{padding:10px 14px;border-bottom:1px solid rgba(30,0,64,.5);vertical-align:middle;white-space:nowrap}
+.ranking-table tr:hover td{background:rgba(255,45,120,.03)}
+.rank-num{font-family:'Orbitron',sans-serif;font-weight:900;font-size:.9rem;color:var(--muted)}
+.rank-1 .rank-num{color:var(--ye);text-shadow:0 0 12px rgba(255,230,0,.6)}
+.rank-2 .rank-num{color:#c0c0c0;text-shadow:0 0 10px rgba(192,192,192,.4)}
+.rank-3 .rank-num{color:#cd7f32;text-shadow:0 0 10px rgba(205,127,50,.4)}
+.rank-nickname{font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.rank-char-img{width:28px;height:28px;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));object-fit:cover;flex-shrink:0}
+.rank-win{color:#00ffb3;font-weight:700}
+.rank-score{color:var(--cy);font-weight:700;text-shadow:0 0 8px rgba(0,229,255,.4)}
+.rank-badge{display:inline-block;font-family:'Orbitron',sans-serif;font-size:.5rem;padding:2px 7px;border-radius:2px;margin-left:6px;font-weight:900;letter-spacing:1px}
+.badge-gold{background:rgba(255,230,0,.15);color:var(--ye);border:1px solid rgba(255,230,0,.3)}
+.badge-silver{background:rgba(192,192,192,.12);color:#c0c0c0;border:1px solid rgba(192,192,192,.25)}
+.badge-bronze{background:rgba(205,127,50,.12);color:#cd7f32;border:1px solid rgba(205,127,50,.25)}
+
+/* 증강 */
+.augment-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.augment-card{background:rgba(8,12,26,.6);border:1px solid var(--border);
+  border-top:2px solid rgba(0,229,255,.25);
+  border-radius:0 0 8px 8px;padding:16px;
+  transition:border-top-color .25s,box-shadow .25s,background .25s,transform .2s}
+.augment-card:hover{border-top-color:var(--cy);
+  box-shadow:0 0 24px rgba(0,229,255,.12),inset 0 0 20px rgba(0,229,255,.03);
+  background:rgba(0,229,255,.03);transform:translateY(-3px)}
+.augment-id{font-family:'Orbitron',sans-serif;font-size:.52rem;color:var(--muted);margin-bottom:4px;letter-spacing:2px}
+.augment-name{font-weight:700;font-size:1rem;color:#fff;margin-bottom:8px}
+.augment-desc{font-size:.78rem;line-height:1.7;color:#8a7aaa}
+
+/* 통계 테이블 */
+.stats-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.stats-table th{background:rgba(8,12,26,.8);border-bottom:2px solid var(--border2);
+  padding:12px 14px;color:var(--muted);font-weight:900;
+  font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:1.5px;
+  text-align:left;white-space:nowrap;cursor:pointer;user-select:none;transition:color .2s}
+.stats-table th:hover{color:var(--cy)}
+.stats-table th.sorted{color:var(--cy);text-shadow:0 0 8px rgba(0,229,255,.4)}
+.stats-table th .sort-icon{margin-left:4px;opacity:.5}
+.stats-table th.sorted .sort-icon{opacity:1}
+.stats-table td{padding:10px 14px;border-bottom:1px solid rgba(30,0,64,.4);vertical-align:middle;white-space:nowrap}
+.stats-table tr:hover td{background:rgba(255,45,120,.03)}
+.stats-rank{font-family:'Orbitron',sans-serif;font-weight:900;font-size:.8rem;color:var(--muted)}
+.stats-name{font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.stats-img{width:28px;height:28px;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));object-fit:cover;flex-shrink:0}
+.bar-cell{display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;height:3px;background:var(--border);border-radius:0;overflow:hidden;min-width:60px}
+.bar-fill{height:100%;border-radius:0;transition:width .5s ease}
+.bar-char{background:linear-gradient(90deg,var(--cy),var(--pu))}
+.bar-aug{background:linear-gradient(90deg,var(--pu),var(--cy))}
+.winrate-high{color:#00ffb3;font-weight:700}
+.winrate-mid{color:var(--ye);font-weight:700}
+.winrate-low{color:var(--muted)}
+
+/* 탭 */
+.tab-bar{display:flex;gap:0;margin-bottom:28px;background:transparent;
+  padding:0;border-radius:0;border:none;border-bottom:1px solid var(--border);width:fit-content}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;
+  color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:.82rem;
+  font-weight:700;padding:8px 18px;border-radius:0;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.tab-btn.active{border-bottom-color:var(--cy);color:#fff;text-shadow:0 0 8px rgba(0,229,255,.4)}
+.tab-btn:hover:not(.active){color:var(--text)}
+
+/* 스크롤바 */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:rgba(3,0,8,.5)}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--cy),var(--pu));border-radius:0}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <span class="nav-logo" onclick="navigate('character')">GCB.GG</span>
+  <button class="nav-link" data-page="ranking">랭킹</button>
+  <button class="nav-link" data-page="character">캐릭터정보</button>
+  <button class="nav-link" data-page="augment">증강정보</button>
+  <button class="nav-link" data-page="char-stats">캐릭터 통계</button>
+  <button class="nav-link" data-page="aug-stats">증강 통계</button>
+  <a href="https://gcbgg.netlify.app/feedback" class="nav-link red" target="_blank">건의/버그</a>
+</nav>
+
+<div class="container">
+
+  <!-- ===== 캐릭터정보 ===== -->
+  <div class="page" id="page-character">
+    <div class="page-header"><h1>캐릭터정보</h1><div class="underline"></div></div>
+    <div class="search-bar">
+      <div class="search-inner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" id="charSearch" placeholder="캐릭터 이름 검색..." autocomplete="off">
+      </div>
+    </div>
+    <div class="count-badge">총 <span id="charCount">71</span>개 캐릭터</div>
+    <div id="charLoading" class="loading-msg">캐릭터 데이터 불러오는 중...</div>
+    <div id="charNoResults" class="no-results">검색 결과가 없습니다.</div>
+    <div class="character-grid" id="charGrid"></div>
+  </div>
+
+  <!-- ===== 랭킹 ===== -->
+  <div class="page" id="page-ranking">
+    <div class="page-header"><h1>랭킹</h1><div class="underline"></div></div>
+    <div id="rankingContent"><div class="loading-msg">랭킹 데이터 불러오는 중...</div></div>
+  </div>
+
+  <!-- ===== 증강정보 ===== -->
+  <div class="page" id="page-augment">
+    <div class="page-header"><h1>증강정보</h1><div class="underline"></div></div>
+    <div class="search-bar">
+      <div class="search-inner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" id="augSearch" placeholder="증강 이름 검색..." autocomplete="off">
+      </div>
+    </div>
+    <div class="count-badge">총 <span id="augCount">42</span>개 증강</div>
+    <div id="augContent"><div class="loading-msg">증강 데이터 불러오는 중...</div></div>
+  </div>
+
+  <!-- ===== 캐릭터 통계 ===== -->
+  <div class="page" id="page-char-stats">
+    <div class="page-header"><h1>캐릭터 통계</h1><div class="underline"></div></div>
+    <div id="charStatsContent"><div class="loading-msg">통계 데이터 불러오는 중...</div></div>
+  </div>
+
+  <!-- ===== 증강 통계 ===== -->
+  <div class="page" id="page-aug-stats">
+    <div class="page-header"><h1>증강 통계</h1><div class="underline"></div></div>
+    <div id="augStatsContent"><div class="loading-msg">통계 데이터 불러오는 중...</div></div>
+  </div>
+
+</div>
+
+<!-- 캐릭터 모달 -->
+<div class="modal-bg" id="charModal">
+  <div class="modal">
+    <button class="modal-close" id="charClose">✕</button>
+    <div class="modal-header">
+      <img class="modal-portrait" id="mPortrait" src="" alt="">
+      <div class="modal-info">
+        <div class="modal-name" id="mName"></div>
+        <div class="modal-stats" id="mStats"></div>
+      </div>
+    </div>
+    <div class="modal-body"><div class="skill-list" id="mSkills"></div></div>
+  </div>
+</div>
+
+<!-- 무기 모달 -->
+<div class="modal-bg" id="weaponModal">
+  <div class="modal" style="max-width:860px">
+    <button class="modal-close" id="weaponClose">✕</button>
+    <div class="modal-header" style="padding:20px 24px">
+      <div class="modal-info">
+        <div class="modal-name" style="font-size:1.3rem;color:#ffd700;letter-spacing:3px">무기선택기</div>
+      </div>
+    </div>
+    <div class="modal-body"><div class="weapon-grid" id="weaponGrid"></div></div>
+  </div>
+</div>
+
+<!-- 타이탄 목록 모달 -->
+<div class="modal-bg" id="titanListModal">
+  <div class="modal">
+    <button class="modal-close" id="titanListClose">✕</button>
+    <div class="modal-header" style="padding:20px 24px">
+      <div class="modal-info">
+        <div class="modal-name" style="font-size:.9rem;color:#ff6b35">🤖 BT-7274 — 타이탄 선택</div>
+      </div>
+    </div>
+    <div class="modal-body"><div class="titan-grid" id="titanGrid"></div></div>
+  </div>
+</div>
+
+<!-- 타이탄 스킬 모달 -->
+<div class="modal-bg" id="titanSkillModal">
+  <div class="modal">
+    <button class="modal-close" id="titanSkillClose">✕</button>
+    <div class="titan-modal-header">
+      <button class="back-btn" id="titanBackBtn">← 타이탄 목록</button>
+      <div class="titan-modal-hero">
+        <img class="titan-modal-img" id="titanSkillImg" src="" alt="">
+        <div>
+          <div class="titan-modal-title" id="titanSkillName"></div>
+          <div class="titan-modal-desc" id="titanSkillDesc"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body"><div class="skill-list" id="titanSkillList"></div></div>
+  </div>
+</div>
+
+<script>
+// ─── API 엔드포인트 ───
+const API = 'https://gcbgg.netlify.app/api/character-info?id=';
+const WEAPON_API = 'https://gcbgg.netlify.app/api/weapon-info?id=';
+const TITAN_LIST_API = 'https://gcbgg.netlify.app/api/titan-list';
+const TITAN_API = 'https://gcbgg.netlify.app/api/titan-info?id=';
+const RANKING_API = 'https://gcbgg.netlify.app/api/ranking';
+const AUGMENT_API = 'https://gcbgg.netlify.app/api/augment-list';
+const CHAR_STATS_API = 'https://gcbgg.netlify.app/api/character-stats';
+const AUG_STATS_API = 'https://gcbgg.netlify.app/api/augment-stats';
+
+const BASE_CHAR = 'https://gcbgg.netlify.app/Resource/character/';
+const BASE_TITAN = 'https://gcbgg.netlify.app/Resource/titan/';
+const BASE_WEAPON = 'https://gcbgg.netlify.app/Resource/weapon/APEXWeaponSelector/';
+const BASE_AUGMENT = 'https://gcbgg.netlify.app/Resource/augment/';
+
+const charCache = {}, nameCache = {}, weaponCache = {}, titanListCache = {}, titanCache = {};
+let augmentData = [], charStatsData = [], augStatsData = [], rankingData = [];
+let augLoaded = false, charStatsLoaded = false, augStatsLoaded = false, rankingLoaded = false;
+
+// ─── 색상 파싱 ───
+function pc(t) {
+  if (!t) return '';
+  return t
+    .replace(/&k[^&\n]*/g,'<span style="color:#fff;text-shadow:0 0 8px #fff">???</span>')
+    .replace(/&6([^&\n]*)/g,'<span style="color:#ffaa00">$1</span>')
+    .replace(/&7([^&\n]*)/g,'<span style="color:#888">$1</span>')
+    .replace(/&f([^&\n]*)/g,'<span style="color:#cdd6f4">$1</span>')
+    .replace(/&b([^&\n]*)/g,'<span style="color:#00e5ff;font-weight:700">$1</span>')
+    .replace(/&a([^&\n]*)/g,'<span style="color:#6fcf97">$1</span>')
+    .replace(/&e([^&\n]*)/g,'<span style="color:#ffe066">$1</span>')
+    .replace(/&c([^&\n]*)/g,'<span style="color:#ff8a80">$1</span>')
+    .replace(/&d([^&\n]*)/g,'<span style="color:#ce93d8">$1</span>')
+    .replace(/&[0-9a-z]/g,'').replace(/\n/g,'<br>');
+}
+
+// ─── 네비게이션 ───
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link[data-page]').forEach(l => l.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const btn = document.querySelector(`.nav-link[data-page="${page}"]`);
+  if (btn) btn.classList.add('active');
+  if (page === 'ranking') loadRanking();
+  if (page === 'augment') loadAugment();
+  if (page === 'char-stats') loadCharStats();
+  if (page === 'aug-stats') loadAugStats();
+}
+
+document.querySelectorAll('.nav-link[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => navigate(btn.dataset.page));
+});
+
+// ─── 캐릭터 페이지 ───
+function getName(d) { return (d.skills && d.skills.stat && d.skills.stat.name) || ('캐릭터 ' + d.characterId); }
+const SKILL_LABELS = ['패시브','스킬 1','스킬 2','스킬 3','궁극기'];
+const SKILL_BADGES = ['badge-passive','badge-1','badge-2','badge-3','badge-ult'];
+
+function buildCharGrid() {
+  const grid = document.getElementById('charGrid');
+  for (let i = 1; i <= 71; i++) {
+    nameCache[i] = '#' + i;
+    const card = document.createElement('div');
+    card.className = 'char-card'; card.dataset.id = i; card.dataset.name = '#' + i;
+    card.style.animationDelay = ((i-1)*0.012) + 's';
+    card.innerHTML = `<img src="${BASE_CHAR}${i}.png" alt="" loading="lazy" onerror="this.src='${BASE_CHAR}0.png'">
+      <div class="char-overlay"><div class="char-name" id="cname${i}">#${i}</div><div class="char-num">#${String(i).padStart(2,'0')}</div></div>`;
+    card.addEventListener('click', () => openCharModal(i));
+    grid.appendChild(card);
+  }
+  document.getElementById('charLoading').style.display = 'none';
+}
+
+async function loadCharData() {
+  // API에서 캐릭터 데이터 fetch (배치 10개씩)
+  const BATCH = 10;
+  for (let start = 1; start <= 71; start += BATCH) {
+    const end = Math.min(start + BATCH - 1, 71);
+    await Promise.all(
+      Array.from({length: end - start + 1}, (_, j) => start + j).map(i =>
+        fetch(API + i).then(r => r.ok ? r.json() : null).then(d => {
+          if (!d) return;
+          charCache[i] = d;
+          const nm = getName(d); nameCache[i] = nm;
+          const el = document.getElementById('cname'+i); if(el) el.textContent = nm;
+          const card = document.querySelector(`[data-id="${i}"]`); if(card) card.dataset.name = nm;
+        }).catch(() => {})
+      )
+    );
+  }
+}
+
+document.getElementById('charSearch').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  let v = 0;
+  document.querySelectorAll('.char-card').forEach(c => {
+    const m = !q || c.dataset.name.toLowerCase().includes(q) || c.dataset.id.includes(q);
+    c.classList.toggle('hidden', !m); if(m) v++;
+  });
+  document.getElementById('charCount').textContent = v;
+  document.getElementById('charNoResults').classList.toggle('show', v===0 && q!=='');
+});
+
+// ─── 모달 유틸 ───
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeAll() { ['charModal','weaponModal','titanListModal','titanSkillModal'].forEach(closeModal); document.body.style.overflow=''; }
+
+['charModal','weaponModal','titanListModal','titanSkillModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => { if(e.target===document.getElementById(id)) closeAll(); });
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
+document.getElementById('charClose').addEventListener('click', closeAll);
+document.getElementById('weaponClose').addEventListener('click', () => { closeModal('weaponModal'); openModal('charModal'); });
+document.getElementById('titanListClose').addEventListener('click', () => { closeModal('titanListModal'); openModal('charModal'); });
+document.getElementById('titanSkillClose').addEventListener('click', closeAll);
+document.getElementById('titanBackBtn').addEventListener('click', () => { closeModal('titanSkillModal'); openModal('titanListModal'); });
+
+function makeSkillEl(sk, badgeClass, label) {
+  const div = document.createElement('div'); div.className = 'skill-item';
+  div.innerHTML = `<div class="skill-header"><span class="skill-badge ${badgeClass}">${label}</span><span class="skill-name">${sk.name}</span></div><div class="skill-desc">${pc(sk.description||'')}</div>`;
+  return div;
+}
+
+async function openCharModal(id) {
+  openModal('charModal');
+  document.getElementById('mPortrait').src = BASE_CHAR+id+'.png';
+  document.getElementById('mPortrait').onerror = function(){this.src=BASE_CHAR+'0.png'};
+  document.getElementById('mName').textContent = nameCache[id]||('캐릭터 '+id);
+  document.getElementById('mStats').innerHTML = '';
+  document.getElementById('mSkills').innerHTML = '<div style="text-align:center;padding:40px;color:#45475a;font-size:.85rem">로딩 중...</div>';
+  let d = charCache[id];
+  if (!d) {
+    try {
+      const r = await fetch(API + id);
+      d = await r.json();
+      charCache[id] = d;
+    } catch(e) {
+      document.getElementById('mSkills').innerHTML='<div style="text-align:center;padding:40px;color:#45475a">데이터를 불러올 수 없습니다</div>';
+      return;
+    }
+  }
+  const s = d.skills||{}, stat = s.stat||{};
+  document.getElementById('mName').textContent = stat.name||('캐릭터 '+id);
+  document.getElementById('mStats').innerHTML = [['체력','❤️'],['공격력','⚔️'],['공격속도','⚡'],['사거리','🎯'],['이동속도','💨'],['체력재생','🔋']]
+    .map(([k,i])=>stat[k]!=null?`<div class="stat-chip">${i}&nbsp;${k}&nbsp;<span>${stat[k]}</span></div>`:'').join('');
+  const se = document.getElementById('mSkills'); se.innerHTML='';
+  if(s.baseattack?.name) se.appendChild(makeSkillEl(s.baseattack,'badge-basic','기본 공격'));
+  [0,1,2,3,4].forEach((key,idx)=>{
+    const sk=s[key]; if(!sk?.name) return;
+    if(sk.id==='APEXWeaponSelector'){const el=makeSkillEl(sk,'badge-weapon',SKILL_LABELS[idx]);el.classList.add('clickable');el.addEventListener('click',()=>openWeaponModal());se.appendChild(el);return;}
+    if(sk.name?.includes('BT-7274')){const el=makeSkillEl(sk,'badge-ult',SKILL_LABELS[idx]);el.classList.add('titan-clickable');el.addEventListener('click',()=>openTitanListModal());se.appendChild(el);return;}
+    se.appendChild(makeSkillEl(sk,SKILL_BADGES[idx],SKILL_LABELS[idx]));
+  });
+}
+
+async function openWeaponModal() {
+  closeModal('charModal'); openModal('weaponModal');
+  const wg = document.getElementById('weaponGrid');
+  wg.innerHTML = '<div style="text-align:center;padding:30px;color:#45475a">로딩 중...</div>';
+  let data = weaponCache['APEX'];
+  if (!data) {
+    try { const r = await fetch(WEAPON_API + 'APEXWeaponSelector'); data = await r.json(); weaponCache['APEX'] = data; }
+    catch(e) { data = {weapons:[]}; }
+  }
+  wg.innerHTML='';
+  (data.weapons||[]).forEach(w=>{
+    const div=document.createElement('div'); div.className='weapon-item';
+    const weaponExt = w.id === 'grenadethermite' ? 'png' : 'webp';
+    div.innerHTML=`<img class="weapon-img" src="${BASE_WEAPON}${w.id}.${weaponExt}" onerror="this.style.display='none'" alt="${w.name}"><div class="weapon-name">${w.name}</div><div class="weapon-desc">${pc(w.description||'')}</div>`;
+    wg.appendChild(div);
+  });
+}
+
+async function openTitanListModal() {
+  closeModal('charModal'); openModal('titanListModal');
+  const tg = document.getElementById('titanGrid');
+  tg.innerHTML = '<div style="text-align:center;padding:30px;color:#45475a">로딩 중...</div>';
+  let data = titanListCache.data;
+  if (!data) {
+    try { const r = await fetch(TITAN_LIST_API); data = await r.json(); titanListCache.data = data; }
+    catch(e) { data = {titans:[]}; }
+  }
+  tg.innerHTML='';
+  (data.titans||[]).forEach(t=>{
+    const div=document.createElement('div'); div.className='titan-item';
+    div.innerHTML=`<img class="titan-img" src="${BASE_TITAN}${t.folderName}.png" onerror="this.style.display='none'" alt="${t.name}"><div class="titan-info"><div class="titan-item-name">${t.name}</div><div class="titan-item-desc">${pc(t.description||'')}</div></div><div class="titan-item-arrow">▶</div>`;
+    div.addEventListener('click',()=>openTitanSkillModal(t.folderName,t.name));
+    tg.appendChild(div);
+  });
+  if(data.smartPistol){
+    const sp=data.smartPistol, div=document.createElement('div'); div.className='smart-pistol-divider';
+    div.innerHTML=`<div class="smart-pistol-label">── BT-7274 격파 후 ──</div><div class="weapon-item"><div class="weapon-name">${sp.name}</div><div class="weapon-desc">${pc(sp.description||'')}</div></div>`;
+    tg.appendChild(div);
+  }
+}
+
+async function openTitanSkillModal(folderName, titanName) {
+  closeModal('titanListModal'); openModal('titanSkillModal');
+  document.getElementById('titanSkillName').textContent = titanName;
+  document.getElementById('titanSkillDesc').innerHTML = '';
+  const imgEl = document.getElementById('titanSkillImg');
+  imgEl.src=`${BASE_TITAN}${folderName}.png`; imgEl.onerror=function(){this.style.display='none'}; imgEl.style.display='';
+  document.getElementById('titanSkillList').innerHTML='<div style="text-align:center;padding:30px;color:#45475a">로딩 중...</div>';
+  let data = titanCache[folderName];
+  if (!data) {
+    try {
+      const r = await fetch(TITAN_API + folderName);
+      data = await r.json(); titanCache[folderName] = data;
+    } catch(e) {}
+    if (data) titanCache[folderName] = data;
+    else { document.getElementById('titanSkillList').innerHTML='<div style="text-align:center;padding:30px;color:#45475a">데이터 없음</div>'; return; }
+  }
+  document.getElementById('titanSkillName').textContent = data.description?.name||titanName;
+  document.getElementById('titanSkillDesc').innerHTML = pc(data.description?.description||'');
+  const sl = document.getElementById('titanSkillList'); sl.innerHTML='';
+  if(data.passive?.name) sl.appendChild(makeSkillEl(data.passive,'badge-passive','패시브'));
+  if(data.weapon?.name) sl.appendChild(makeSkillEl(data.weapon,'badge-weapon','주 무기'));
+  const sLabels=['스킬 1','스킬 2','스킬 3','궁극기'], sBadges=['badge-1','badge-2','badge-3','badge-ult'];
+  (data.skills||[]).forEach((sk,i)=>{ if(!sk?.name) return; sl.appendChild(makeSkillEl(sk,sBadges[i]||'badge-1',sLabels[i]||('스킬 '+(i+1)))); });
+}
+
+// ─── 랭킹 페이지 ───
+async function loadRanking() {
+  if (rankingLoaded) return; rankingLoaded = true;
+  document.getElementById('rankingContent').innerHTML='<div class="loading-msg">랭킹 데이터 불러오는 중...</div>';
+  try {
+    const r = await fetch(RANKING_API);
+    rankingData = await r.json();
+    if (Array.isArray(rankingData) && rankingData.length) renderRanking();
+    else document.getElementById('rankingContent').innerHTML='<div class="loading-msg" style="color:#45475a">랭킹 데이터가 없습니다</div>';
+  } catch(e) {
+    document.getElementById('rankingContent').innerHTML='<div class="loading-msg" style="color:#45475a">불러올 수 없습니다</div>';
+  }
+}
+
+function renderRanking() {
+  const sorted = [...rankingData].sort((a,b)=>parseFloat(b.avarageRankLeast50)-parseFloat(a.avarageRankLeast50));
+  let html = `<div style="overflow-x:auto"><table class="ranking-table">
+    <thead><tr>
+      <th>#</th><th>플레이어</th><th>승률</th><th>평균 순위점수</th><th>총 게임</th><th>승리</th><th>평균 킬</th><th>평균 딜량</th><th>최대 킬</th>
+    </tr></thead><tbody>`;
+  sorted.forEach((p,i)=>{
+    const rank=i+1, cls=rank<=3?`rank-${rank}`:'';
+    const badge=rank===1?'<span class="rank-badge badge-gold">GOLD</span>':rank===2?'<span class="rank-badge badge-silver">SILVER</span>':rank===3?'<span class="rank-badge badge-bronze">BRONZE</span>':'';
+    const charId=p.mostUsedCharacter;
+    const nickname = p.nickname.length===36&&p.nickname.includes('-') ? p.nickname.slice(0,8)+'...' : p.nickname;
+    html+=`<tr class="${cls}">
+      <td><span class="rank-num">${rank}</span></td>
+      <td><span class="rank-nickname"><img class="rank-char-img" src="${BASE_CHAR}${charId}.png" onerror="this.style.display='none'" alt="">${nickname}${badge}</span></td>
+      <td><span class="rank-win">${parseFloat(p.winRate).toFixed(1)}%</span></td>
+      <td><span class="rank-score">${parseFloat(p.avarageRankLeast50).toFixed(1)}</span></td>
+      <td>${p.totalGames}</td>
+      <td>${p.winCount}</td>
+      <td>${parseFloat(p.averageKillRate).toFixed(2)}</td>
+      <td>${Number(p.averageDamageDealt).toLocaleString()}</td>
+      <td>${p.maxKill}</td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('rankingContent').innerHTML = html;
+}
+
+// ─── 증강정보 페이지 ───
+async function loadAugment() {
+  if (augLoaded) return; augLoaded = true;
+  try {
+    const r = await fetch(AUGMENT_API);
+    const json = await r.json();
+    augmentData = json.augments || (Array.isArray(json) ? json : []);
+  } catch(e) { augmentData = []; }
+  renderAugment(augmentData);
+  document.getElementById('augCount').textContent = augmentData.length;
+}
+
+function renderAugment(list) {
+  let html = '<div class="augment-grid">';
+  list.forEach(a=>{
+    html+=`<div class="augment-card" data-name="${a.name}">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+        <img src="${BASE_AUGMENT}${a.id}.png" onerror="this.style.display='none'" alt="${a.name}" style="width:60px;height:60px;border-radius:10px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;filter:drop-shadow(0 0 8px rgba(0,229,255,.2))">
+        <div>
+          <div class="augment-id">#${String(a.id).padStart(2,'0')}</div>
+          <div style="font-weight:800;font-size:1.05rem;color:#00e5ff;letter-spacing:.5px;text-shadow:0 0 10px rgba(0,229,255,.4)">${a.name}</div>
+        </div>
+      </div>
+      <div class="augment-desc">${pc(a.description||'')}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('augContent').innerHTML = html;
+}
+
+document.getElementById('augSearch').addEventListener('input', e=>{
+  const q=e.target.value.trim().toLowerCase();
+  if(!augLoaded) return;
+  const filtered=!q?augmentData:augmentData.filter(a=>a.name.toLowerCase().includes(q)||String(a.id).includes(q));
+  renderAugment(filtered);
+  document.getElementById('augCount').textContent=filtered.length;
+});
+
+// ─── 캐릭터 통계 ───
+let charStatsSortCol='picks', charStatsSortAsc=false;
+async function loadCharStats() {
+  if (charStatsLoaded) return; charStatsLoaded = true;
+  try {
+    const r = await fetch(CHAR_STATS_API);
+    const json = await r.json();
+    charStatsData = (Array.isArray(json) ? json : (json.stats||[])).filter(c=>c.characterId!=='0');
+  } catch(e) { charStatsData = []; }
+  renderCharStats();
+}
+
+function renderCharStats() {
+  const maxPicks = Math.max(...charStatsData.map(c=>c.picks));
+  const sorted = [...charStatsData].sort((a,b)=>{
+    let va=parseFloat(a[charStatsSortCol])||0, vb=parseFloat(b[charStatsSortCol])||0;
+    return charStatsSortAsc?va-vb:vb-va;
+  });
+  const cols = [
+    {key:'picks',label:'픽 수'},
+    {key:'winRate',label:'승률 (%)'},
+    {key:'averageRank',label:'평균 등수'},
+    {key:'averageKills',label:'평균 킬'},
+    {key:'averageDamageDealt',label:'평균 딜량'},
+  ];
+  let html=`<div style="overflow-x:auto"><table class="stats-table"><thead><tr>
+    <th>#</th><th>캐릭터</th>`;
+  cols.forEach(c=>{
+    const active=charStatsSortCol===c.key, icon=active?(charStatsSortAsc?'▲':'▼'):'↕';
+    html+=`<th class="${active?'sorted':''}" onclick="sortCharStats('${c.key}')">${c.label}<span class="sort-icon">${icon}</span></th>`;
+  });
+  html+=`</tr></thead><tbody>`;
+  sorted.forEach((c,i)=>{
+    const wr=parseFloat(c.winRate), wrCls=wr>=10?'winrate-high':wr>=3?'winrate-mid':'winrate-low';
+    const pct=Math.round((c.picks/maxPicks)*100);
+    const nm=nameCache[parseInt(c.characterId)]||('#'+c.characterId);
+    html+=`<tr>
+      <td><span class="stats-rank">${i+1}</span></td>
+      <td><span class="stats-name"><img class="stats-img" src="${BASE_CHAR}${c.characterId}.png" onerror="this.style.display='none'" alt="">${nm}</span></td>
+      <td><div class="bar-cell"><span>${c.picks}</span><div class="bar-bg"><div class="bar-fill bar-char" style="width:${pct}%"></div></div></div></td>
+      <td><span class="${wrCls}">${wr.toFixed(1)}%</span></td>
+      <td>${parseFloat(c.averageRank).toFixed(1)}</td>
+      <td>${parseFloat(c.averageKills).toFixed(2)}</td>
+      <td>${Number(c.averageDamageDealt).toLocaleString()}</td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('charStatsContent').innerHTML=html;
+}
+
+function sortCharStats(col) {
+  if(charStatsSortCol===col) charStatsSortAsc=!charStatsSortAsc;
+  else { charStatsSortCol=col; charStatsSortAsc=false; }
+  renderCharStats();
+}
+
+// ─── 증강 통계 ───
+let augStatsSortCol='picks', augStatsSortAsc=false;
+async function loadAugStats() {
+  if (augStatsLoaded) return; augStatsLoaded = true;
+  try {
+    const r = await fetch(AUG_STATS_API);
+    augStatsData = await r.json();
+  } catch(e) { augStatsData = []; }
+  if (!augLoaded) { await loadAugment(); }
+  renderAugStats();
+}
+
+function renderAugStats() {
+  const maxPicks = Math.max(...augStatsData.map(a=>a.picks));
+  const sorted = [...augStatsData].sort((a,b)=>{
+    let va=parseFloat(a[augStatsSortCol])||0, vb=parseFloat(b[augStatsSortCol])||0;
+    return augStatsSortAsc?va-vb:vb-va;
+  });
+  let html=`<div style="overflow-x:auto"><table class="stats-table"><thead><tr>
+    <th>#</th><th>증강</th>
+    <th class="${augStatsSortCol==='picks'?'sorted':''}" onclick="sortAugStats('picks')">픽 수<span class="sort-icon">${augStatsSortCol==='picks'?(augStatsSortAsc?'▲':'▼'):'↕'}</span></th>
+  </tr></thead><tbody>`;
+  sorted.forEach((a,i)=>{
+    const aug=augmentData.find(x=>x.id===a.augmentId)||{name:'#'+a.augmentId};
+    const pct=maxPicks>0?Math.round((a.picks/maxPicks)*100):0;
+    html+=`<tr>
+      <td><span class="stats-rank">${i+1}</span></td>
+      <td><span class="stats-name">${aug.name}</span></td>
+      <td><div class="bar-cell"><span>${a.picks}</span><div class="bar-bg"><div class="bar-fill bar-aug" style="width:${pct}%"></div></div></div></td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  document.getElementById('augStatsContent').innerHTML=html;
+}
+
+function sortAugStats(col) {
+  if(augStatsSortCol===col) augStatsSortAsc=!augStatsSortAsc;
+  else { augStatsSortCol=col; augStatsSortAsc=false; }
+  renderAugStats();
+}
+
+// ─── 초기화 ───
+buildCharGrid();
+loadCharData();
+navigate('character');
+</script>
+</body>
+</html>
