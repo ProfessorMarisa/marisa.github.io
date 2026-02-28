@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐릭터 정보 - GCB.gg</title>
+    <link rel="stylesheet" href="%EC%BA%90%EB%A6%AD%ED%84%B0%20%EC%A0%95%EB%B3%B4%20-%20GCB.gg_files/main.css">
+    <link rel="icon" href="https://gcbgg.netlify.app/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="header-bar">
+        <a href="https://gcbgg.netlify.app/" class="header-logo">GCB.GG</a>
+        <a class="nav-button" href="https://gcbgg.netlify.app/ranking">랭킹</a>
+        <a class="nav-button" href="https://gcbgg.netlify.app/character">캐릭터정보</a>
+        <a class="nav-button" href="https://gcbgg.netlify.app/augment">증강정보</a>
+        <a class="nav-button" href="https://gcbgg.netlify.app/character_stats">캐릭터 통계</a>
+        <a class="nav-button" href="https://gcbgg.netlify.app/augment_stats">증강 통계</a>
+        <a class="nav-button nav-button-red" href="https://gcbgg.netlify.app/feedback">건의/버그</a>
+    </div>
+
+    <div class="container character-detail-container">
+        <div class="character-header">
+            <img id="character-portrait" class="character-portrait-lg" src="%EC%BA%90%EB%A6%AD%ED%84%B0%20%EC%A0%95%EB%B3%B4%20-%20GCB.gg_files/1.png" alt="캐릭터 초상화">
+            <h1 id="character-name">앨리스</h1>
+        </div>
+
+        <div id="loading" class="loading-text" style="display: none;">로딩 중...</div>
+
+        <!-- 스탯 정보 -->
+        <div id="stats-container" class="character-stats-container"><div class="stats-grid"><div class="stat-item">
+                        <span class="stat-icon">❤️</span>
+                        <span class="stat-label">체력</span>
+                        <span class="stat-value" style="color: #ff6b6b">500</span>
+                    </div><div class="stat-item">
+                        <span class="stat-icon">⚔️</span>
+                        <span class="stat-label">공격력</span>
+                        <span class="stat-value" style="color: #ffa502">30</span>
+                    </div><div class="stat-item">
+                        <span class="stat-icon">⚡</span>
+                        <span class="stat-label">공격속도</span>
+                        <span class="stat-value" style="color: #ffdd59">0.8</span>
+                    </div><div class="stat-item">
+                        <span class="stat-icon">🎯</span>
+                        <span class="stat-label">사거리</span>
+                        <span class="stat-value" style="color: #70a1ff">45</span>
+                    </div><div class="stat-item">
+                        <span class="stat-icon">👟</span>
+                        <span class="stat-label">이동속도</span>
+                        <span class="stat-value" style="color: #7bed9f">4.5</span>
+                    </div><div class="stat-item">
+                        <span class="stat-icon">💚</span>
+                        <span class="stat-label">체력재생</span>
+                        <span class="stat-value" style="color: #2ed573">2</span>
+                    </div></div></div>
+
+        <div id="skills-container" class="skills-container"><div class="skill-card">
+                <div class="skill-header">
+                    <span class="skill-type">패시브</span>
+                    <span class="skill-name">인형을 다루는 정도의 능력</span>
+                    
+                </div>
+                <div class="skill-description">
+                    기본 공격이 <span style="color: #FFAA00">50</span><span style="color:#FF5555">(+15% 타격력)</span>의 피해를 추가로 입힙니다
+                    <br><span style="color: #AAAAAA">재사용대기시간: 0.2초</span>
+                </div>
+            </div><div class="skill-card">
+                <div class="skill-header">
+                    <span class="skill-type">스킬 1</span>
+                    <span class="skill-name">주력「트립 와이어」</span>
+                    
+                </div>
+                <div class="skill-description">
+                    전방으로 실을 쏴 <span style="color: #FFAA00">60</span><span style="color:#FF5555">(+90% 타격력)</span>의 피해를 입힙니다
+                    <br>적중한 적을 <span style="color: #AAAAAA">2초</span>간 침묵시키고 <span style="color:#55FFFF">26.8%</span>만큼 둔화시킵니다
+                    <br>실이 블록에 적중했을 경우 해당 방향으로 날아갑니다
+                    <br><span style="color: #AAAAAA">사거리: 48</span>
+                    <br><span style="color: #AAAAAA">재사용대기시간: 4초</span>
+                </div>
+            </div><div class="skill-card">
+                <div class="skill-header">
+                    <span class="skill-type">스킬 2</span>
+                    <span class="skill-name">주부「상하이 인형」</span>
+                    
+                </div>
+                <div class="skill-description">
+                    인형을 소환하여 고출력 레이저를 발사합니다
+                    <br>적중한 적에게 <span style="color: #FFAA00">90</span><span style="color:#FF5555">(+150% 타격력)</span>의 피해를 입힙니다
+                    <br><span style="color: #AAAAAA">사거리: 48</span>
+                    <br><span style="color: #AAAAAA">재사용대기시간: 11초</span>
+                </div>
+            </div><div class="skill-card">
+                <div class="skill-header">
+                    <span class="skill-type">스킬 3</span>
+                    <span class="skill-name">주저「봉래인형」</span>
+                </div>
+                <div class="skill-description">
+                    인형을 6개 소환하여 소형 레이저를 발사합니다
+                    <br>적중한 적에게 각각 <span style="color: #FFAA00">40</span><span style="color:#FF5555">(+40% 타격력)</span>의 피해를 입힙니다
+                    <br><span style="color: #AAAAAA">사거리: 32</span>
+                    <br><span style="color: #AAAAAA">재사용대기시간: 10초</span>
+                </div>
+            </div><div class="skill-card">
+                <div class="skill-header">
+                    <span class="skill-type">궁극기</span>
+                    <span class="skill-name">마조「리턴 인애니메이트니스」</span>
+                </div>
+                <div class="skill-description">
+                    매우 강한 폭발을 일으키는 인형을 던져 <span style="color: #FFAA00">200</span><span style="color:#FF5555">(+250% 타격력)</span>의 피해를 입힙니다
+                    <br>적에게 적중시 즉시 폭발하며 적중당한 적은 <span style="color: #FFAA00">100</span><span style="color:#FF5555">(+150% 타격력)</span>의 피해를 추가로 입습니다
+                    <br><span style="color: #AAAAAA">범위: 16</span>
+                    <br><span style="color: #AAAAAA">재사용대기시간: 70초</span>
+                </div>
+            </div></div>
+    </div>
+
+    <script src="%EC%BA%90%EB%A6%AD%ED%84%B0%20%EC%A0%95%EB%B3%B4%20-%20GCB.gg_files/character_detail.js"></script>
+
+
+</body></html>
